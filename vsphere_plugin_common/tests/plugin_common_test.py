@@ -2099,7 +2099,7 @@ class VspherePluginsCommonTests(unittest.TestCase):
             'allow_insecure': allow_insecure,
         }
 
-        if cert_path is not 'unset':
+        if cert_path != 'unset':
             cfg['certificate_path'] = cert_path
 
         client = vsphere_plugin_common.VsphereClient()
