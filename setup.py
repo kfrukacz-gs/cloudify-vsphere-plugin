@@ -39,6 +39,7 @@ setuptools.setup(
         "cloudify-plugins-common>=3.4",
         "pyvmomi>=6.5.0.2017.5",
         "netaddr==0.7.18",
-        "pyyaml>=3.10"
+        "pyyaml>=3.10",
+        "pycdlib",
     ],
 )

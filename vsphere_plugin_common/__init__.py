@@ -2671,6 +2671,11 @@ class NetworkClient(VsphereClient):
         logger().debug("Port deleted.")
 
 
+class RawVolumeClient(VsphereClient):
+
+    pass
+
+
 class StorageClient(VsphereClient):
 
     def create_storage(self, vm_id, storage_size, parent_key, mode,
@@ -3126,3 +3131,4 @@ def _with_client(client_name, client):
 with_server_client = _with_client('server_client', ServerClient)
 with_network_client = _with_client('network_client', NetworkClient)
 with_storage_client = _with_client('storage_client', StorageClient)
+with_rawvolume_client = _with_client('rawvolume_client', RawVolumeClient)

@@ -348,6 +348,22 @@ node_types:
         resize:
           implementation: vsphere.vsphere_storage_plugin.storage.resize
 
+  cloudify.vsphere.nodes.ISO9660:
+    derived_from: cloudify.nodes.Volume
+    properties:
+      files:
+        default: {}
+        description: >
+          File list with content. (Key:value)
+      connection_config:
+        default: {}
+        type: cloudify.datatypes.vsphere.Config
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: vsphere.vsphere_storage_plugin.iso9660.create
+          inputs: {}
+
   cloudify.vsphere.nodes.Datacenter:
     derived_from: cloudify.nodes.Root
     properties:
