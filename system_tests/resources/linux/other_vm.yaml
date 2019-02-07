@@ -2,7 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/4.5/types.yaml
-  - https://raw.githubusercontent.com/cloudify-incubator/cloudify-utilities-plugin/1.7.0/plugin.yaml
+  - https://raw.githubusercontent.com/cloudify-incubator/cloudify-utilities-plugin/1.12.5/plugin.yaml
   - https://raw.githubusercontent.com/cloudify-cosmo/cloudify-vsphere-plugin/cloudinit/plugin.yaml
 
 inputs:
@@ -134,11 +134,37 @@ node_types:
             - name: Internal
 
 node_templates:
-###############################################################################
-# vsphere section
-###############################################################################
+
+  cloud_init:
+    type: cloudify.nodes.CloudInit.CloudConfig
+    properties:
+      resource_config:
+        password: passw0rd
+        chpasswd:
+           expire: False
+        ssh_pwauth: True
+
+  cloud_init_image:
+    type: cloudify.vsphere.nodes.ISO9660
+    properties:
+      connection_config: *connection_config
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            files:
+              meta-data: >
+                instance-id: localhost
+              user-data: { get_attribute: [cloud_init, cloud_config ] }
+    relationships:
+    - target: cloud_init
+      type: cloudify.relationships.depends_on
+
   vm_base:
     type: host
+    relationships:
+    - target: cloud_init_image
+      type: cloudify.relationships.depends_on
 
   vm_instance:
     type: cloudify.vsphere.nodes.Server

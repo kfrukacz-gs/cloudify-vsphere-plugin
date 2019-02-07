@@ -52,11 +52,14 @@ def _iso_name(name):
 
 @op
 @with_rawvolume_client
-def create(storage_client, files, **kwargs):
+def create(rawvolume_client, files, **kwargs):
     ctx.logger.info("Creating new iso image.")
 
     iso = pycdlib.PyCdlib()
     iso.new(vol_ident='cidata', joliet=3, rock_ridge='1.09')
+
+    if not files:
+        files = ctx.node.properties.get('files', {})
 
     for name in files:
         file_bufer = BytesIO()
@@ -70,16 +73,14 @@ def create(storage_client, files, **kwargs):
     outiso.seek(0, os.SEEK_END)
     iso_size = outiso.tell()
     iso.close()
+    outiso.seek(0, os.SEEK_SET)
 
     ctx.logger.info("ISO size: {}".format(repr(iso_size)))
 
-    # stream = conn.newStream(0)
-    # volume.upload(stream, 0, iso_size, 0)
-    # outiso.seek(0, os.SEEK_SET)
-
-    # read_size = iso_size
-    # while read_size > 0:
-    #   buffer = outiso.read(read_size)
-    #   read_size -= len(buffer)
-    #   stream.send(buffer)
-    # stream.finish()
+    rawvolume_client.upload_file(
+        allowed_datacenters=["Datacenter"],
+        allowed_datastores=["datastore1"],
+        remote_file="/cloudinit/cloud_init.iso",
+        data=outiso,
+        host=ctx.node.properties['connection_config']['host'],
+        port=ctx.node.properties['connection_config']['port'])

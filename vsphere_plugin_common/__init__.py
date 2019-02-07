@@ -31,6 +31,7 @@ import yaml
 from netaddr import IPNetwork
 from pyVim.connect import SmartConnect, SmartConnectNoSSL, Disconnect
 from pyVmomi import vim, vmodl
+import requests
 
 # Cloudify imports
 from cloudify import ctx
@@ -2673,7 +2674,39 @@ class NetworkClient(VsphereClient):
 
 class RawVolumeClient(VsphereClient):
 
-    pass
+    def upload_file(self, allowed_datacenters, allowed_datastores,
+                    remote_file, data, host, port):
+        # Realy check datastores/datacenters
+        dc = self._get_obj_by_name(vim.Datacenter, allowed_datacenters[0])
+        ds = self._get_obj_by_name(vim.Datastore, allowed_datastores[0])
+
+        params = {"dsName": ds.name,
+                  "dcPath": dc.name}
+        http_url = (
+            "https://" + host + ":" + str(port) + "/folder" + remote_file
+        )
+
+        # Get the cookie built from the current session
+        client_cookie = self.si._stub.cookie
+        # Break apart the cookie into it's component parts - This is more than
+        # is needed, but a good example of how to break apart the cookie
+        # anyways. The verbosity makes it clear what is happening.
+        cookie_name = client_cookie.split("=", 1)[0]
+        cookie_value = client_cookie.split("=", 1)[1].split(";", 1)[0]
+        cookie_path = client_cookie.split("=", 1)[1].split(";", 1)[1].split(
+            ";", 1)[0].lstrip()
+        cookie_text = " " + cookie_value + "; $" + cookie_path
+        # Make a cookie
+        cookie = dict()
+        cookie[cookie_name] = cookie_text
+
+        print requests.put(
+            http_url,
+            params=params,
+            data=data,
+            headers={'Content-Type': 'application/octet-stream'},
+            cookies=cookie,
+            verify=False)
 
 
 class StorageClient(VsphereClient):
