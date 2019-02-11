@@ -200,6 +200,12 @@ def create_new_server(
         )
     )
 
+    ctx.logger.info(
+        'Cdrom path: {cdrom}'.format(
+            cdrom=cdrom_image,
+        )
+    )
+
     if isinstance(allowed_hosts, basestring):
         allowed_hosts = [allowed_hosts]
     if isinstance(allowed_clusters, basestring):
