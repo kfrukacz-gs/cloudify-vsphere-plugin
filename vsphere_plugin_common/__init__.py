@@ -1426,6 +1426,7 @@ class ServerClient(VsphereClient):
             )
             relospec.host = host.obj
 
+        ide_controller = None
         for device in template_vm.config.hardware.device:
             # delete network interface
             if hasattr(device, 'macAddress'):
@@ -1447,6 +1448,12 @@ class ServerClient(VsphereClient):
                 cdrom.operation = \
                     vim.vm.device.VirtualDeviceSpec.Operation.remove
                 devices.append(cdrom)
+                ide_controller = device.controllerKey
+            # ide controller
+            elif isinstance(device, vim.vm.device.VirtualIDEController):
+                # skip fully attached controllers
+                if len(device.device) < 2:
+                    ide_controller = device.key
 
         port_groups, distributed_port_groups = self._get_port_group_names()
 
@@ -1510,6 +1517,24 @@ class ServerClient(VsphereClient):
                 guest_map.adapter.gateway = network["gateway"]
                 guest_map.adapter.subnetMask = str(nw.netmask)
                 adaptermaps.append(guest_map)
+
+        # attach cdrom
+        if ide_controller and cdrom_image:
+            cdrom_device = vim.vm.device.VirtualDeviceSpec()
+            cdrom_device.operation = \
+                vim.vm.device.VirtualDeviceSpec.Operation.add
+            connectable = vim.vm.device.VirtualDevice.ConnectInfo()
+            connectable.allowGuestControl = True
+            connectable.startConnected = True
+
+            cdrom = vim.vm.device.VirtualCdrom()
+            cdrom.controllerKey = ide_controller
+            cdrom.key = -1
+            cdrom.connectable = connectable
+            cdrom.backing = vim.vm.device.VirtualCdrom.IsoBackingInfo(
+                fileName=cdrom_image)
+            cdrom_device.device = cdrom
+            devices.append(cdrom_device)
 
         vmconf = vim.vm.ConfigSpec()
         vmconf.numCPUs = cpus
@@ -2728,6 +2753,7 @@ class RawVolumeClient(VsphereClient):
             headers={'Content-Type': 'application/octet-stream'},
             cookies=cookie,
             verify=False)
+        return "[{}] {}".format(allowed_datastores[0], remote_file)
 
 
 class StorageClient(VsphereClient):

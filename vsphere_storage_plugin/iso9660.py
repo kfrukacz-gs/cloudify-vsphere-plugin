@@ -79,11 +79,11 @@ def create(rawvolume_client, files, **kwargs):
     ctx.logger.info("ISO size: {}".format(repr(iso_size)))
 
     iso_disk = "/cloudinit/{}.iso".format(ctx.instance.id)
-    ctx.instance.runtime_properties[STORAGE_IMAGE] = iso_disk
-    rawvolume_client.upload_file(
-        allowed_datacenters=["Datacenter"],
-        allowed_datastores=["datastore1"],
-        remote_file=iso_disk,
-        data=outiso,
-        host=ctx.node.properties['connection_config']['host'],
-        port=ctx.node.properties['connection_config']['port'])
+    ctx.instance.runtime_properties[
+        STORAGE_IMAGE] = rawvolume_client.upload_file(
+            allowed_datacenters=["Datacenter"],
+            allowed_datastores=["datastore1"],
+            remote_file=iso_disk,
+            data=outiso,
+            host=ctx.node.properties['connection_config']['host'],
+            port=ctx.node.properties['connection_config']['port'])
