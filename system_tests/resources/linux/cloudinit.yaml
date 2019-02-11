@@ -162,6 +162,8 @@ node_templates:
 
   vm_base:
     type: host
+    properties:
+      cdrom_image: { get_attribute: [cloud_init_image, storage_image ] }
     relationships:
     - target: cloud_init_image
       type: cloudify.relationships.depends_on

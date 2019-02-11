@@ -36,6 +36,8 @@ VSPHERE_STORAGE_RUNTIME_PROPERTIES = [VSPHERE_STORAGE_FILE_NAME,
                                       VSPHERE_STORAGE_VM_ID,
                                       VSPHERE_STORAGE_SCSI_ID]
 
+STORAGE_IMAGE = 'storage_image'
+
 DATACENTER_ID = 'vsphere_datacenter_id'
 DATACENTER_RUNTIME_PROPERTIES = [DATACENTER_ID]
 

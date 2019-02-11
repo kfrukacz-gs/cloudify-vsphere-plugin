@@ -1354,6 +1354,7 @@ class ServerClient(VsphereClient):
             allowed_hosts=None,
             allowed_clusters=None,
             allowed_datastores=None,
+            cdrom_image=None,
             ):
         logger().debug(
             "Entering create_server with parameters %s"
@@ -1425,9 +1426,10 @@ class ServerClient(VsphereClient):
             )
             relospec.host = host.obj
 
-        nicspec = vim.vm.device.VirtualDeviceSpec()
         for device in template_vm.config.hardware.device:
+            # delete network interface
             if hasattr(device, 'macAddress'):
+                nicspec = vim.vm.device.VirtualDeviceSpec()
                 nicspec.device = device
                 logger().warn(
                     'Removing network adapter from template. '
@@ -1435,6 +1437,16 @@ class ServerClient(VsphereClient):
                 nicspec.operation = \
                     vim.vm.device.VirtualDeviceSpec.Operation.remove
                 devices.append(nicspec)
+            # remove cdrom
+            elif isinstance(device, vim.vm.device.VirtualCdrom):
+                cdrom = vim.vm.device.VirtualDeviceSpec()
+                cdrom.device = device
+                logger().warn(
+                    'Removing cdrom from template. '
+                    'Template should have no attached cdroms.')
+                cdrom.operation = \
+                    vim.vm.device.VirtualDeviceSpec.Operation.remove
+                devices.append(cdrom)
 
         port_groups, distributed_port_groups = self._get_port_group_names()
 

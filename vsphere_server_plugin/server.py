@@ -186,6 +186,7 @@ def create_new_server(
         custom_attributes,
         # Backwards compatibility- only linux was really working
         os_family='linux',
+        cdrom_image=None,
         ):
     vm_name = get_vm_name(ctx, server, os_family)
     ctx.logger.info(
@@ -286,7 +287,8 @@ def create_new_server(
         dns_servers,
         allowed_hosts,
         allowed_clusters,
-        allowed_datastores)
+        allowed_datastores,
+        cdrom_image=cdrom_image)
     ctx.logger.info('Successfully created server called {name}'.format(
                     name=vm_name))
     ctx.instance.runtime_properties[VSPHERE_SERVER_ID] = server_obj._moId
@@ -311,6 +313,7 @@ def start(
         custom_sysprep,
         custom_attributes,
         use_external_resource,
+        cdrom_image=None,
         ):
     ctx.logger.debug("Checking whether server exists...")
 
@@ -350,6 +353,7 @@ def start(
             custom_sysprep,
             custom_attributes,
             os_family=os_family,
+            cdrom_image=cdrom_image,
             )
     else:
         ctx.logger.info("Server already exists, powering on.")

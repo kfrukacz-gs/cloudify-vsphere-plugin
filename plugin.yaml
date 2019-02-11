@@ -164,6 +164,10 @@ node_types:
             lock: locked
             keyring: empty
         required: false
+      cdrom_image:
+        description: |
+          Cdrom image path
+        default: false
       connection_config:
         type: cloudify.datatypes.vsphere.Config
     interfaces:
