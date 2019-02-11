@@ -80,7 +80,7 @@ def create(rawvolume_client, files, **kwargs):
     rawvolume_client.upload_file(
         allowed_datacenters=["Datacenter"],
         allowed_datastores=["datastore1"],
-        remote_file="/cloudinit/cloud_init.iso",
+        remote_file="/cloudinit/{}.iso".format(ctx.instance.id),
         data=outiso,
         host=ctx.node.properties['connection_config']['host'],
         port=ctx.node.properties['connection_config']['port'])
