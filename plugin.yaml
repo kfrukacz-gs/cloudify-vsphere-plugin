@@ -376,6 +376,9 @@ node_types:
         create:
           implementation: vsphere.vsphere_storage_plugin.iso9660.create
           inputs: {}
+        delete:
+          implementation: vsphere.vsphere_storage_plugin.iso9660.delete
+          inputs: {}
 
   cloudify.vsphere.nodes.Datacenter:
     derived_from: cloudify.nodes.Root

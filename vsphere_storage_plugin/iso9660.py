@@ -88,3 +88,13 @@ def create(rawvolume_client, files, datacenter_name, allowed_datastores,
             data=outiso,
             host=ctx.node.properties['connection_config']['host'],
             port=ctx.node.properties['connection_config']['port'])
+
+
+@op
+@with_rawvolume_client
+def delete(rawvolume_client, datacenter_name, **kwargs):
+    datastorepath = ctx.instance.runtime_properties.get(STORAGE_IMAGE)
+    if not datastorepath:
+        return
+    rawvolume_client.delete_file(datacenter_name=datacenter_name,
+                                 datastorepath=datastorepath)
