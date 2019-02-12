@@ -359,9 +359,11 @@ node_types:
         description: >
           datacenter name.
         type: string
+        required: false
       allowed_datastores:
         description: >
           Which ESX datastore(s) this server is allowed to be deployed on.
+        required: false
       files:
         default: {}
         description: >
