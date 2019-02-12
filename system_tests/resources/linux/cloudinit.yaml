@@ -152,6 +152,9 @@ node_templates:
       cloudify.interfaces.lifecycle:
         create:
           inputs:
+            datacenter_name: { get_input: vcenter_datacenter }
+            allowed_datastores:
+            - { get_input: vcenter_datastore }
             files:
               meta-data: >
                 instance-id: localhost

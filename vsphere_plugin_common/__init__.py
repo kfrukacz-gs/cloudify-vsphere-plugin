@@ -2720,10 +2720,10 @@ class NetworkClient(VsphereClient):
 
 class RawVolumeClient(VsphereClient):
 
-    def upload_file(self, allowed_datacenters, allowed_datastores,
+    def upload_file(self, datacenter_name, allowed_datastores,
                     remote_file, data, host, port):
         # Realy check datastores/datacenters
-        dc = self._get_obj_by_name(vim.Datacenter, allowed_datacenters[0])
+        dc = self._get_obj_by_name(vim.Datacenter, datacenter_name)
         ds = self._get_obj_by_name(vim.Datastore, allowed_datastores[0])
 
         params = {"dsName": ds.name,
@@ -2746,13 +2746,14 @@ class RawVolumeClient(VsphereClient):
         cookie = dict()
         cookie[cookie_name] = cookie_text
 
-        print requests.put(
+        response = requests.put(
             http_url,
             params=params,
             data=data,
             headers={'Content-Type': 'application/octet-stream'},
             cookies=cookie,
             verify=False)
+        response.raise_for_status()
         return "[{}] {}".format(allowed_datastores[0], remote_file)
 
 

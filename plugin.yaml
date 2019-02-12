@@ -355,6 +355,13 @@ node_types:
   cloudify.vsphere.nodes.ISO9660:
     derived_from: cloudify.nodes.Volume
     properties:
+      datacenter_name:
+        description: >
+          datacenter name.
+        type: string
+      allowed_datastores:
+        description: >
+          Which ESX datastore(s) this server is allowed to be deployed on.
       files:
         default: {}
         description: >

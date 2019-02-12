@@ -53,7 +53,8 @@ def _iso_name(name):
 
 @op
 @with_rawvolume_client
-def create(rawvolume_client, files, **kwargs):
+def create(rawvolume_client, files, datacenter_name, allowed_datastores,
+           **kwargs):
     ctx.logger.info("Creating new iso image.")
 
     iso = pycdlib.PyCdlib()
@@ -81,8 +82,8 @@ def create(rawvolume_client, files, **kwargs):
     iso_disk = "/cloudinit/{}.iso".format(ctx.instance.id)
     ctx.instance.runtime_properties[
         STORAGE_IMAGE] = rawvolume_client.upload_file(
-            allowed_datacenters=["Datacenter"],
-            allowed_datastores=["datastore1"],
+            datacenter_name=datacenter_name,
+            allowed_datastores=allowed_datastores,
             remote_file=iso_disk,
             data=outiso,
             host=ctx.node.properties['connection_config']['host'],
