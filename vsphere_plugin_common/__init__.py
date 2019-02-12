@@ -2722,7 +2722,7 @@ class RawVolumeClient(VsphereClient):
 
     def delete_file(self, datacenter_name, datastorepath):
         dc = self._get_obj_by_name(vim.Datacenter, datacenter_name)
-        self.si.content.fileManager.DeleteFile(datastorepath, dc)
+        self.si.content.fileManager.DeleteFile(datastorepath, dc.obj)
 
     def upload_file(self, datacenter_name, allowed_datastores,
                     remote_file, data, host, port):

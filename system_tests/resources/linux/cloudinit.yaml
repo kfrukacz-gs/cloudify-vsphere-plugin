@@ -148,11 +148,11 @@ node_templates:
     type: cloudify.vsphere.nodes.ISO9660
     properties:
       connection_config: *connection_config
+      datacenter_name: { get_input: vcenter_datacenter }
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
           inputs:
-            datacenter_name: { get_input: vcenter_datacenter }
             allowed_datastores:
             - { get_input: vcenter_datastore }
             files:
